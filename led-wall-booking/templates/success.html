@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Booking Confirmed — LumenWall</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">LUMEN<span>WALL</span></a>
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/admin">Admin</a></li>
+  </ul>
+</nav>
+
+<div class="success-page">
+  <div class="success-card fade-in">
+    <div class="success-icon">✓</div>
+    <h1>BOOKING CONFIRMED!</h1>
+    <p>Your LED wall has been reserved. We'll be in touch shortly to confirm setup details.</p>
+
+    <div class="booking-id">BOOKING #{{ '%05d' % booking.id }}</div>
+
+    <div class="booking-details-grid">
+      <div class="detail-row">
+        <span class="label">Name</span>
+        <span class="value">{{ booking.customer_name }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Phone</span>
+        <span class="value">{{ booking.phone }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">LED Wall</span>
+        <span class="value">{{ booking.led_wall_size }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Start Date</span>
+        <span class="value">{{ booking.start_date }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">End Date</span>
+        <span class="value">{{ booking.end_date }}</span>
+      </div>
+      <div class="detail-row">
+        <span class="label">Location</span>
+        <span class="value">{{ booking.event_address }}</span>
+      </div>
+      {% if booking.latitude and booking.longitude %}
+      <div class="detail-row">
+        <span class="label">Coordinates</span>
+        <span class="value">{{ "%.4f"|format(booking.latitude) }}, {{ "%.4f"|format(booking.longitude) }}</span>
+      </div>
+      {% endif %}
+    </div>
+
+    <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+      <a href="/" class="btn btn-primary">Book Another →</a>
+      <a href="/admin" class="btn btn-outline">View All Bookings</a>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

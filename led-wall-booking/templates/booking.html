@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Book {{ wall.size }} — LumenWall</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="/">LUMEN<span>WALL</span></a>
+  <ul class="nav-links">
+    <li><a href="/#walls">LED Walls</a></li>
+    <li><a href="/admin">Admin</a></li>
+  </ul>
+</nav>
+
+<div class="booking-page">
+  <div class="booking-container">
+
+    <div class="booking-header">
+      <p class="section-label">Reserve Your Unit</p>
+      <h1>BOOK YOUR LED WALL</h1>
+      <p>Fill in your details below to secure your {{ wall.size }} LED wall.</p>
+    </div>
+
+    <div class="booking-layout">
+
+      <!-- FORM -->
+      <div class="booking-form-card">
+        <form id="bookingForm">
+          <input type="hidden" name="led_wall_size" id="led_wall_size" value="{{ wall.size }}" />
+
+          <div class="form-section-title">Contact Information</div>
+
+          <div class="form-group">
+            <label for="customer_name">Full Name</label>
+            <input type="text" id="customer_name" name="customer_name" placeholder="Your full name" required />
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" placeholder="+1 (555) 000-0000" required />
+          </div>
+
+          <div class="form-section-title">Event Dates</div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="start_date">Start Date</label>
+              <input type="date" id="start_date" name="start_date" required />
+            </div>
+            <div class="form-group">
+              <label for="end_date">End Date</label>
+              <input type="date" id="end_date" name="end_date" required />
+            </div>
+          </div>
+
+          <div class="availability-status" id="availabilityStatus"></div>
+
+          <div class="form-section-title">Event Location</div>
+
+          <div class="form-group">
+            <label for="event_address">Event Address</label>
+            <input type="text" id="event_address" name="event_address" placeholder="123 Main St, City, State" required />
+          </div>
+
+          <div class="form-group">
+            <label>Pin Location on Map</label>
+            <div id="map"></div>
+            <p class="map-note">📍 Click anywhere on the map to pin your event location.</p>
+            <input type="hidden" id="latitude" name="latitude" />
+            <input type="hidden" id="longitude" name="longitude" />
+          </div>
+
+          <button type="submit" class="submit-btn" id="submitBtn" disabled>
+            Confirm Booking
+          </button>
+        </form>
+      </div>
+
+      <!-- SUMMARY -->
+      <div class="booking-summary-card">
+        <div class="summary-wall-visual">
+          {% if wall.id == '6x8' %}
+          <div class="summary-screen" style="width:60px; height:80px;">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#0a0a0a,#1a0500);display:flex;align-items:center;justify-content:center;">
+              <div style="width:40%;height:40%;border-radius:50%;background:radial-gradient(circle,rgba(255,100,0,0.3) 0%,transparent 70%);animation:screenGlow 3s ease-in-out infinite alternate;"></div>
+            </div>
+          </div>
+          {% else %}
+          <div class="summary-screen" style="width:70px; height:105px;">
+            <div style="width:100%;height:100%;background:linear-gradient(135deg,#0a0a0a,#1a0500);display:flex;align-items:center;justify-content:center;">
+              <div style="width:40%;height:40%;border-radius:50%;background:radial-gradient(circle,rgba(255,100,0,0.3) 0%,transparent 70%);animation:screenGlow 3s ease-in-out infinite alternate;"></div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+
+        <div class="summary-title">{{ wall.size }} LED Wall</div>
+        <div class="summary-price">{{ wall.price }}</div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-item">
+          <span>Resolution</span>
+          <span>{{ wall.pixels }}</span>
+        </div>
+        <div class="summary-item">
+          <span>Brightness</span>
+          <span>{{ wall.brightness }}</span>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <div class="summary-item" id="sum-dates" style="display:none;">
+          <span>Dates</span>
+          <span id="sum-dates-val">—</span>
+        </div>
+        <div class="summary-item" id="sum-location" style="display:none;">
+          <span>Location</span>
+          <span id="sum-location-val">—</span>
+        </div>
+        <div class="summary-item" id="sum-coords" style="display:none;">
+          <span>Coordinates</span>
+          <span id="sum-coords-val">—</span>
+        </div>
+
+        <div class="summary-divider"></div>
+
+        <ul class="wall-features">
+          {% for feat in wall.features %}
+          <li>{{ feat }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{{ url_for('static', filename='js/map.js') }}"></script>
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

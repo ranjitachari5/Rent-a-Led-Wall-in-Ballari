@@ -1,0 +1,14 @@
+-- LumenWall Booking Database Schema
+
+CREATE TABLE IF NOT EXISTS bookings (
+    id             INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_name  TEXT    NOT NULL,
+    phone          TEXT    NOT NULL,
+    led_wall_size  TEXT    NOT NULL,       -- '6 × 8 ft' or '8 × 12 ft'
+    start_date     TEXT    NOT NULL,       -- ISO format: YYYY-MM-DD
+    end_date       TEXT    NOT NULL,       -- ISO format: YYYY-MM-DD
+    event_address  TEXT    NOT NULL,
+    latitude       REAL,                  -- GPS latitude
+    longitude      REAL,                  -- GPS longitude
+    created_at     TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
