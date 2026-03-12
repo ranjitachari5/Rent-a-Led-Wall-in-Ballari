@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+{% block title %}Admin — LumenWall{% endblock %}
+
+{% block head %}
+<style>
+  .admin-wrap { padding: 3rem 1.5rem; max-width: 1100px; margin: 0 auto; }
+  .admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+  .admin-title { font-family: 'Bebas Neue', cursive; font-size: 2.5rem; letter-spacing: .05em; }
+
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+  .mini-stat {
+    background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 1.25rem; display: flex; flex-direction: column; gap: .25rem;
+  }
+  .mini-stat-label { font-size: .7rem; color: var(--text3); letter-spacing: .1em; text-transform: uppercase; }
+  .mini-stat-val { font-family: 'Bebas Neue', cursive; font-size: 2rem; color: var(--accent); letter-spacing: .04em; }
+
+  .table-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+  table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+  thead tr { background: var(--bg3); border-bottom: 1px solid var(--border); }
+  th {
+    text-align: left; padding: .875rem 1.25rem;
+    font-size: .7rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--text3); font-weight: 600;
+  }
+  td { padding: .875rem 1.25rem; border-bottom: 1px solid var(--border); color: var(--text2); }
+  tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--card-hover); }
+  .badge {
+    display: inline-block; padding: .2rem .65rem; border-radius: 999px;
+    font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  }
+  .badge-6x8 { background: rgba(124,108,250,.15); color: #a89cff; border: 1px solid rgba(124,108,250,.2); }
+  .badge-8x12 { background: var(--glow); color: var(--accent); border: 1px solid rgba(232,255,90,.2); }
+  [data-theme="light"] .badge-8x12 { background: rgba(91,62,248,.1); color: var(--accent); border-color: rgba(91,62,248,.2); }
+  .empty-row { text-align: center; color: var(--text3); padding: 3rem; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="admin-wrap">
+  <div class="admin-header">
+    <h1 class="admin-title">ADMIN DASHBOARD</h1>
+    <a href="/" class="btn btn-ghost">← Back to Site</a>
+  </div>
+
+  {% set total = bookings|length %}
+  {% set wall_6x8 = bookings|selectattr('led_wall_size','equalto','6x8')|list|length %}
+  {% set wall_8x12 = bookings|selectattr('led_wall_size','equalto','8x12')|list|length %}
+
+  <div class="stats-row">
+    <div class="mini-stat">
+      <div class="mini-stat-label">Total Bookings</div>
+      <div class="mini-stat-val">{{ total }}</div>
+    </div>
+    <div class="mini-stat">
+      <div class="mini-stat-label">6×8 Bookings</div>
+      <div class="mini-stat-val">{{ wall_6x8 }}</div>
+    </div>
+    <div class="mini-stat">
+      <div class="mini-stat-label">8×12 Bookings</div>
+      <div class="mini-stat-val">{{ wall_8x12 }}</div>
+    </div>
+    <div class="mini-stat">
+      <div class="mini-stat-label">Est. Revenue</div>
+      <div class="mini-stat-val">${{ ((wall_6x8 * 299) + (wall_8x12 * 499))|string[:5] }}</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Customer</th>
+          <th>Phone</th>
+          <th>Wall</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Location</th>
+          <th>Booked At</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% if bookings %}
+          {% for b in bookings %}
+          <tr>
+            <td style="font-family:'DM Mono',monospace;color:var(--text3)">#{{ '%04d'|format(b.id) }}</td>
+            <td style="color:var(--text);font-weight:600">{{ b.customer_name }}</td>
+            <td style="font-family:'DM Mono',monospace">{{ b.phone }}</td>
+            <td><span class="badge badge-{{ b.led_wall_size }}">{{ b.led_wall_size }}</span></td>
+            <td>{{ b.start_date }}</td>
+            <td>{{ b.end_date }}</td>
+            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="{{ b.event_address }}">{{ b.event_address }}</td>
+            <td style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--text3)">{{ b.created_at[:16] if b.created_at else '—' }}</td>
+          </tr>
+          {% endfor %}
+        {% else %}
+          <tr><td colspan="8" class="empty-row">No bookings yet.</td></tr>
+        {% endif %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

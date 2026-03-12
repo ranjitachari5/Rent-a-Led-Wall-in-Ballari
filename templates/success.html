@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Booking Confirmed — LumenWall{% endblock %}
+
+{% block head %}
+<style>
+  .success-wrap {
+    min-height: 80vh;
+    display: flex; align-items: center; justify-content: center;
+    padding: 3rem 1.5rem;
+  }
+  .success-card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: 20px; padding: 3rem; max-width: 540px; width: 100%;
+    text-align: center;
+    animation: popIn .4s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes popIn { from { opacity:0; transform:scale(.92); } to { opacity:1; transform:scale(1); } }
+  .success-icon {
+    width: 72px; height: 72px; border-radius: 50%;
+    background: var(--glow); border: 2px solid var(--accent);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; margin: 0 auto 1.5rem;
+  }
+  .success-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2.5rem; letter-spacing: .05em; margin-bottom: .5rem;
+  }
+  .success-sub { color: var(--text2); margin-bottom: 2rem; }
+  .booking-details {
+    background: var(--bg3); border-radius: var(--radius);
+    padding: 1.5rem; text-align: left; margin-bottom: 2rem;
+  }
+  .detail-row {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: .5rem 0; border-bottom: 1px solid var(--border); font-size: .9rem;
+  }
+  .detail-row:last-child { border-bottom: none; }
+  .detail-row span:first-child { color: var(--text2); }
+  .detail-row strong { font-family: 'DM Mono', monospace; font-size: .85rem; }
+  .booking-id {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.2rem; letter-spacing: .1em; color: var(--accent);
+  }
+  .success-actions { display: flex; gap: 1rem; justify-content: center; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="success-wrap">
+  <div class="success-card">
+    <div class="success-icon">✓</div>
+    <h1 class="success-title">YOU'RE ALL SET!</h1>
+    <p class="success-sub">Your LED wall has been reserved. We'll be in touch to confirm the details.</p>
+
+    <div class="booking-details">
+      <div class="detail-row">
+        <span>Booking ID</span>
+        <strong class="booking-id">#{{ '%04d' | format(booking.id) }}</strong>
+      </div>
+      <div class="detail-row">
+        <span>Name</span>
+        <strong>{{ booking.customer_name }}</strong>
+      </div>
+      <div class="detail-row">
+        <span>Wall Size</span>
+        <strong>{{ booking.led_wall_size }}</strong>
+      </div>
+      <div class="detail-row">
+        <span>Dates</span>
+        <strong>{{ booking.start_date }} → {{ booking.end_date }}</strong>
+      </div>
+      <div class="detail-row">
+        <span>Location</span>
+        <strong style="max-width:60%;text-align:right;font-size:.8rem;">{{ booking.event_address[:60] }}{% if booking.event_address|length > 60 %}…{% endif %}</strong>
+      </div>
+    </div>
+
+    <div class="success-actions">
+      <a href="/" class="btn btn-primary">Back to Home</a>
+      <a href="/admin" class="btn btn-ghost">View All Bookings</a>
+    </div>
+  </div>
+</div>
+{% endblock %}

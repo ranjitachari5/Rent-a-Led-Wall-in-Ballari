@@ -1,0 +1,476 @@
+{% extends "base.html" %}
+{% block title %}LumenWall — LED Wall Rentals{% endblock %}
+
+{% block head %}
+<style>
+  /* ── Hero ──────────────────────────────────────────────── */
+  .hero {
+    padding: 7rem 1.5rem 5rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 70% 50% at 50% 0%, var(--glow), transparent 70%);
+    pointer-events: none;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: .5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: .75rem; letter-spacing: .15em;
+    color: var(--accent);
+    background: var(--glow);
+    border: 1px solid rgba(232,255,90,.2);
+    padding: .35rem 1rem;
+    border-radius: 999px;
+    margin-bottom: 1.5rem;
+    text-transform: uppercase;
+  }
+  [data-theme="light"] .hero-eyebrow {
+    border-color: rgba(91,62,248,.2);
+  }
+  .hero h1 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(3.5rem, 10vw, 7rem);
+    line-height: .95;
+    letter-spacing: .04em;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 em {
+    font-style: normal;
+    color: var(--accent);
+  }
+  .hero-sub {
+    max-width: 520px; margin: 0 auto 2.5rem;
+    color: var(--text2); font-size: 1.1rem; line-height: 1.7;
+  }
+  .hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+  /* ── Stats bar ──────────────────────────────────────────── */
+  .stats-bar {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 1.75rem 0;
+    display: flex; justify-content: center;
+    gap: 0;
+  }
+  .stat {
+    flex: 1; max-width: 200px;
+    text-align: center;
+    padding: 0 2rem;
+    border-right: 1px solid var(--border);
+  }
+  .stat:last-child { border-right: none; }
+  .stat-val {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2.2rem;
+    color: var(--accent);
+    letter-spacing: .05em;
+    line-height: 1;
+    margin-bottom: .25rem;
+  }
+  .stat-label { font-size: .8rem; color: var(--text3); letter-spacing: .08em; text-transform: uppercase; }
+
+  /* ── Section headings ───────────────────────────────────── */
+  .section { padding: 5rem 1.5rem; }
+  .section-header { margin-bottom: 3rem; }
+  .section-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: .75rem; letter-spacing: .15em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: .75rem;
+  }
+  .section-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    letter-spacing: .04em; line-height: 1;
+    margin-bottom: .75rem;
+  }
+  .section-sub { color: var(--text2); max-width: 480px; }
+
+  /* ── Wall Cards ─────────────────────────────────────────── */
+  .walls-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  .wall-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+    position: relative;
+  }
+  .wall-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow);
+    border-color: rgba(232,255,90,.3);
+  }
+  [data-theme="light"] .wall-card:hover { border-color: rgba(91,62,248,.25); }
+
+  .wall-card.featured {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), 0 8px 32px var(--glow);
+  }
+  .wall-badge {
+    position: absolute; top: 1rem; right: 1rem;
+    background: var(--accent);
+    color: #0a0a0f;
+    font-size: .7rem; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    padding: .2rem .7rem; border-radius: 999px;
+  }
+  .wall-visual {
+    height: 180px;
+    background: var(--bg3);
+    display: flex; align-items: center; justify-content: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .wall-visual::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(135deg, var(--glow) 0%, transparent 60%);
+  }
+  .wall-screen {
+    background: linear-gradient(135deg, #1a1a3e, #0d0d20);
+    border: 2px solid rgba(232,255,90,.3);
+    border-radius: 4px;
+    display: flex; align-items: center; justify-content: center;
+    position: relative; z-index: 1;
+    box-shadow: 0 0 40px rgba(232,255,90,.1);
+  }
+  [data-theme="light"] .wall-screen {
+    background: linear-gradient(135deg, #e8e0ff, #d0c8ff);
+    border-color: rgba(91,62,248,.3);
+    box-shadow: 0 0 40px rgba(91,62,248,.1);
+  }
+  .wall-screen svg { opacity: .4; }
+  .wall-body { padding: 1.75rem; }
+  .wall-size {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2rem; letter-spacing: .06em;
+    line-height: 1; margin-bottom: .25rem;
+  }
+  .wall-desc { color: var(--text2); font-size: .9rem; margin-bottom: 1.25rem; }
+  .wall-specs {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: .5rem; margin-bottom: 1.5rem;
+  }
+  .spec-item { background: var(--bg3); border-radius: 8px; padding: .6rem .8rem; }
+  .spec-label { font-size: .65rem; color: var(--text3); letter-spacing: .1em; text-transform: uppercase; margin-bottom: .1rem; }
+  .spec-val { font-size: .85rem; font-weight: 600; font-family: 'DM Mono', monospace; }
+  .wall-features {
+    display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.5rem;
+  }
+  .feature-chip {
+    font-size: .72rem; padding: .2rem .7rem;
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: 999px; color: var(--text2);
+  }
+  .wall-footer {
+    display: flex; align-items: center; justify-content: space-between;
+    padding-top: 1.25rem; border-top: 1px solid var(--border);
+  }
+  .wall-price {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.6rem; color: var(--accent); letter-spacing: .04em;
+  }
+  .wall-price-unit { font-size: .75rem; color: var(--text3); font-family: 'DM Sans', sans-serif; margin-left: .2rem; }
+
+  /* ── Pricing Section ────────────────────────────────────── */
+  #pricing { background: var(--bg2); }
+
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .price-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    position: relative;
+    transition: transform var(--transition), box-shadow var(--transition);
+  }
+  .price-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow);
+  }
+  .price-card.highlight {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 1px var(--accent), 0 12px 40px var(--glow);
+  }
+  .price-card-badge {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--accent);
+    color: #0a0a0f;
+    font-size: .7rem; font-weight: 700; letter-spacing: .12em;
+    text-transform: uppercase;
+    padding: .25rem 1rem; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .price-tier {
+    font-family: 'DM Mono', monospace;
+    font-size: .75rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--text3); margin-bottom: .5rem;
+  }
+  .price-name {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.5rem; letter-spacing: .06em;
+    margin-bottom: 1rem;
+  }
+  .price-amount {
+    display: flex; align-items: baseline; gap: .25rem;
+    margin-bottom: 1.75rem;
+  }
+  .price-currency { font-size: 1.2rem; font-weight: 600; color: var(--text2); margin-top: .3rem; }
+  .price-number {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 3.5rem; line-height: 1;
+    color: var(--accent); letter-spacing: .02em;
+  }
+  .price-per { font-size: .85rem; color: var(--text3); align-self: flex-end; padding-bottom: .2rem; }
+  .price-divider { height: 1px; background: var(--border); margin-bottom: 1.5rem; }
+  .price-features { list-style: none; display: flex; flex-direction: column; gap: .75rem; margin-bottom: 2rem; }
+  .price-features li {
+    display: flex; align-items: flex-start; gap: .6rem;
+    font-size: .9rem; color: var(--text2);
+  }
+  .price-features li::before {
+    content: '✓';
+    color: var(--accent);
+    font-weight: 700; flex-shrink: 0; margin-top: .05rem;
+  }
+  .price-features li.dimmed { color: var(--text3); }
+  .price-features li.dimmed::before { content: '—'; color: var(--text3); }
+
+  .pricing-note {
+    text-align: center;
+    color: var(--text3); font-size: .85rem;
+    padding: 1.5rem; background: var(--bg3);
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+  }
+  .pricing-note strong { color: var(--text2); }
+
+  /* ── CTA Banner ─────────────────────────────────────────── */
+  .cta-banner {
+    margin: 0 1.5rem 5rem;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 3.5rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .cta-banner::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 60% 80% at 50% 50%, var(--glow), transparent 70%);
+    pointer-events: none;
+  }
+  .cta-banner h2 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: clamp(2rem, 5vw, 3rem);
+    letter-spacing: .05em; margin-bottom: .75rem;
+  }
+  .cta-banner p { color: var(--text2); margin-bottom: 2rem; max-width: 420px; margin-left: auto; margin-right: auto; }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">⚡ Premium LED Wall Rentals</div>
+    <h1>LIGHT UP<br>YOUR <em>EVENT</em></h1>
+    <p class="hero-sub">Crystal-clear LED walls for concerts, corporate events, trade shows, and any occasion that deserves to be unforgettable.</p>
+    <div class="hero-cta">
+      <a href="#walls" class="btn btn-primary">View LED Walls</a>
+      <a href="#pricing" class="btn btn-ghost">See Pricing</a>
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-val">500+</div>
+    <div class="stat-label">Events Done</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">8K</div>
+    <div class="stat-label">Nits Brightness</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">4K</div>
+    <div class="stat-label">Max Resolution</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">24/7</div>
+    <div class="stat-label">Support</div>
+  </div>
+</div>
+
+<!-- LED Walls -->
+<section class="section" id="walls">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">// Our Inventory</div>
+      <h2 class="section-title">CHOOSE YOUR WALL</h2>
+      <p class="section-sub">Two sizes. Both stunning. Pick the one that fits your stage.</p>
+    </div>
+    <div class="walls-grid">
+      {% for wall in led_walls %}
+      <div class="wall-card {% if wall.id == '8x12' %}featured{% endif %}">
+        {% if wall.id == '8x12' %}<div class="wall-badge">Most Popular</div>{% endif %}
+        <div class="wall-visual">
+          {% if wall.id == '6x8' %}
+          <div class="wall-screen" style="width:108px;height:144px;">
+            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+            </svg>
+          </div>
+          {% else %}
+          <div class="wall-screen" style="width:140px;height:192px;">
+            <svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+            </svg>
+          </div>
+          {% endif %}
+        </div>
+        <div class="wall-body">
+          <div class="wall-size">{{ wall.size }}</div>
+          <p class="wall-desc">{{ wall.description }}</p>
+          <div class="wall-specs">
+            <div class="spec-item">
+              <div class="spec-label">Resolution</div>
+              <div class="spec-val">{{ wall.pixels }}</div>
+            </div>
+            <div class="spec-item">
+              <div class="spec-label">Brightness</div>
+              <div class="spec-val">{{ wall.brightness }}</div>
+            </div>
+          </div>
+          <div class="wall-features">
+            {% for f in wall.features %}
+            <span class="feature-chip">{{ f }}</span>
+            {% endfor %}
+          </div>
+          <div class="wall-footer">
+            <div>
+              <div class="wall-price">{{ wall.price.split('/')[0] }}<span class="wall-price-unit">/day</span></div>
+            </div>
+            <a href="/booking/{{ wall.id }}" class="btn btn-primary">Book Now →</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Pricing -->
+<section class="section" id="pricing">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">// Transparent Pricing</div>
+      <h2 class="section-title">SIMPLE PRICING,<br>ZERO SURPRISES</h2>
+      <p class="section-sub">Flexible rental packages for every budget and event scale.</p>
+    </div>
+
+    <div class="pricing-grid">
+      <!-- 6×8 Day -->
+      <div class="price-card">
+        <div class="price-tier">6 × 8 ft Wall</div>
+        <div class="price-name">Day Rental</div>
+        <div class="price-amount">
+          <span class="price-currency">$</span>
+          <span class="price-number">299</span>
+          <span class="price-per">/ day</span>
+        </div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>Full HD 1920×1080 display</li>
+          <li>5000 nits brightness</li>
+          <li>Indoor &amp; outdoor use</li>
+          <li>Professional setup &amp; teardown</li>
+          <li>Remote control included</li>
+          <li>Content playback support</li>
+          <li class="dimmed">Wireless sync</li>
+          <li class="dimmed">Dedicated technician</li>
+        </ul>
+        <a href="/booking/6x8" class="btn btn-ghost" style="width:100%;justify-content:center;">Book 6×8 Wall</a>
+      </div>
+
+      <!-- 8×12 Day (highlighted) -->
+      <div class="price-card highlight">
+        <div class="price-card-badge">⭐ Best Value</div>
+        <div class="price-tier">8 × 12 ft Wall</div>
+        <div class="price-name">Day Rental</div>
+        <div class="price-amount">
+          <span class="price-currency">$</span>
+          <span class="price-number">499</span>
+          <span class="price-per">/ day</span>
+        </div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>4K Ultra HD 3840×2160</li>
+          <li>8000 nits brightness</li>
+          <li>Weather resistant (IP65)</li>
+          <li>Professional setup &amp; teardown</li>
+          <li>Wireless sync technology</li>
+          <li>Dedicated on-site technician</li>
+          <li>Priority support</li>
+          <li>Multi-source input</li>
+        </ul>
+        <a href="/booking/8x12" class="btn btn-primary" style="width:100%;justify-content:center;">Book 8×12 Wall</a>
+      </div>
+
+      <!-- Weekend Package -->
+      <div class="price-card">
+        <div class="price-tier">Multi-Day Discount</div>
+        <div class="price-name">Weekend Pack</div>
+        <div class="price-amount">
+          <span class="price-currency">$</span>
+          <span class="price-number">799</span>
+          <span class="price-per">/ 3 days</span>
+        </div>
+        <div class="price-divider"></div>
+        <ul class="price-features">
+          <li>Any wall size included</li>
+          <li>Save up to 30% vs daily rate</li>
+          <li>Fri–Sun block booking</li>
+          <li>Setup on Day 1 only</li>
+          <li>Full tech support all 3 days</li>
+          <li>Flexible content updates</li>
+          <li>Free generator rental</li>
+          <li class="dimmed">Custom branding wrap</li>
+        </ul>
+        <a href="/booking/8x12" class="btn btn-ghost" style="width:100%;justify-content:center;">Enquire Weekend</a>
+      </div>
+    </div>
+
+    <div class="pricing-note">
+      <strong>Need a custom quote?</strong> For week-long rentals, multiple walls, or large festivals — <a href="mailto:hello@lumenwall.com">contact us</a> for a tailored package. Volume discounts available for recurring clients.
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-banner container">
+  <h2>READY TO LIGHT UP YOUR EVENT?</h2>
+  <p>Book your LED wall in minutes. Real-time availability, instant confirmation.</p>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;">
+    <a href="#walls" class="btn btn-primary">Browse Walls</a>
+    <a href="/admin" class="btn btn-ghost">View Dashboard</a>
+  </div>
+</div>
+{% endblock %}
