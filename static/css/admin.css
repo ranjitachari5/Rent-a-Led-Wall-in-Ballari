@@ -1,0 +1,31 @@
+.admin-wrap { padding: 3rem 1.5rem; max-width: 1100px; margin: 0 auto; }
+.admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+.admin-title { font-family: 'Bebas Neue', cursive; font-size: 2.5rem; letter-spacing: .05em; }
+
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+.mini-stat {
+  background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
+  padding: 1.25rem; display: flex; flex-direction: column; gap: .25rem;
+}
+.mini-stat-label { font-size: .7rem; color: var(--text3); letter-spacing: .1em; text-transform: uppercase; }
+.mini-stat-val { font-family: 'Bebas Neue', cursive; font-size: 2rem; color: var(--accent); letter-spacing: .04em; }
+
+.table-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+table { width: 100%; border-collapse: collapse; font-size: .875rem; }
+thead tr { background: var(--bg3); border-bottom: 1px solid var(--border); }
+th {
+  text-align: left; padding: .875rem 1.25rem;
+  font-size: .7rem; letter-spacing: .1em; text-transform: uppercase;
+  color: var(--text3); font-weight: 600;
+}
+td { padding: .875rem 1.25rem; border-bottom: 1px solid var(--border); color: var(--text2); }
+tr:last-child td { border-bottom: none; }
+tbody tr:hover { background: var(--card-hover); }
+.badge {
+  display: inline-block; padding: .2rem .65rem; border-radius: 999px;
+  font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+}
+.badge-6x8 { background: rgba(124,108,250,.15); color: #a89cff; border: 1px solid rgba(124,108,250,.2); }
+.badge-8x12 { background: var(--glow); color: var(--accent); border: 1px solid rgba(232,255,90,.2); }
+[data-theme="light"] .badge-8x12 { background: rgba(91,62,248,.1); color: var(--accent); border-color: rgba(91,62,248,.2); }
+.empty-row { text-align: center; color: var(--text3); padding: 3rem; }

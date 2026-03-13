@@ -1,72 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Book {{ wall.size }} — LumenWall{% endblock %}
+{% block title %}Book {{ service.name }} — Crazy Vision{% endblock %}
 
 {% block head %}
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<style>
-  .booking-layout {
-    max-width: 900px; margin: 0 auto; padding: 3rem 1.5rem;
-    display: grid; grid-template-columns: 1fr 380px; gap: 2rem;
-    align-items: start;
-  }
-  @media(max-width:768px){ .booking-layout{ grid-template-columns:1fr; } }
-
-  .form-header { margin-bottom: 2rem; }
-  .form-eyebrow { font-family:'DM Mono',monospace; font-size:.75rem; letter-spacing:.15em; text-transform:uppercase; color:var(--accent); margin-bottom:.5rem; }
-  .form-title { font-family:'Bebas Neue',cursive; font-size:2.5rem; letter-spacing:.04em; }
-
-  .form-group { margin-bottom:1.25rem; }
-  label { display:block; font-size:.8rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--text2); margin-bottom:.4rem; }
-  input, textarea {
-    width:100%; padding:.75rem 1rem;
-    background:var(--bg3); border:1px solid var(--border);
-    border-radius:var(--radius); color:var(--text);
-    font-family:'DM Sans',sans-serif; font-size:.95rem;
-    transition:border-color var(--transition), box-shadow var(--transition);
-    outline:none;
-  }
-  input:focus, textarea:focus { border-color:var(--accent); box-shadow:0 0 0 3px var(--glow); }
-  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
-
-  #map { height:200px; border-radius:var(--radius); border:1px solid var(--border); margin-top:.5rem; overflow:hidden; }
-
-  .avail-status {
-    padding:.6rem 1rem; border-radius:8px; font-size:.85rem; font-weight:500;
-    display:none; margin-top:.5rem;
-  }
-  .avail-ok { background:rgba(100,200,100,.1); color:#6dc86d; border:1px solid rgba(100,200,100,.2); display:block; }
-  .avail-no { background:rgba(255,80,80,.1); color:#ff6060; border:1px solid rgba(255,80,80,.2); display:block; }
-
-  /* Summary card */
-  .summary-card {
-    background:var(--bg2); border:1px solid var(--border);
-    border-radius:16px; padding:1.75rem; position:sticky; top:80px;
-  }
-  .summary-title { font-family:'Bebas Neue',cursive; font-size:1.4rem; letter-spacing:.05em; margin-bottom:1.25rem; }
-  .summary-wall {
-    background:var(--bg3); border-radius:var(--radius);
-    padding:1rem; margin-bottom:1.25rem;
-    display:flex; align-items:center; gap:1rem;
-  }
-  .summary-icon {
-    width:48px; height:48px; background:var(--glow); border-radius:8px;
-    display:flex; align-items:center; justify-content:center;
-    flex-shrink:0; font-size:1.4rem;
-  }
-  .summary-wall-name { font-weight:700; margin-bottom:.1rem; }
-  .summary-wall-id { font-family:'DM Mono',monospace; font-size:.75rem; color:var(--text3); }
-  .summary-rows { display:flex; flex-direction:column; gap:.7rem; margin-bottom:1.25rem; }
-  .summary-row { display:flex; justify-content:space-between; align-items:center; font-size:.9rem; }
-  .summary-row span:first-child { color:var(--text2); }
-  .summary-row strong { font-family:'DM Mono',monospace; }
-  .summary-divider { height:1px; background:var(--border); margin:.5rem 0; }
-  .summary-total { font-size:1.1rem; font-weight:700; }
-  .summary-total strong { color:var(--accent); font-family:'Bebas Neue',cursive; font-size:1.6rem; letter-spacing:.04em; }
-  .summary-note { font-size:.75rem; color:var(--text3); text-align:center; margin-top:.75rem; }
-
-  #submitBtn { width:100%; justify-content:center; padding:1rem; font-size:1rem; margin-top:1rem; }
-  #submitBtn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/booking.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -75,44 +12,58 @@
   <div>
     <div class="form-header">
       <div class="form-eyebrow">// New Booking</div>
-      <h1 class="form-title">BOOK {{ wall.size }} WALL</h1>
+      <h1 class="form-title">BOOK {{ service.name | upper }}</h1>
     </div>
 
     <form id="bookingForm">
-      <input type="hidden" id="wall_size" value="{{ wall.id }}">
+      <input type="hidden" id="service_id" value="{{ service.id }}">
 
       <div class="form-row">
         <div class="form-group">
           <label>Full Name</label>
-          <input type="text" id="customer_name" placeholder="Jane Smith" required>
+          <input type="text" id="customer_name" placeholder="Your Name" required>
         </div>
         <div class="form-group">
           <label>Phone</label>
-          <input type="tel" id="phone" placeholder="+1 (555) 000-0000" required>
+          <input type="tel" id="phone" placeholder="+91 98765 43210" required>
         </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label>Start Date</label>
-          <input type="date" id="start_date" required>
+          <label>Email</label>
+          <input type="email" id="email" placeholder="your@email.com">
         </div>
         <div class="form-group">
-          <label>End Date</label>
-          <input type="date" id="end_date" required>
+          <label>Event Type</label>
+          <input type="text" id="event_type" placeholder="e.g., Wedding, Birthday, Corporate Event">
         </div>
       </div>
 
-      <div id="availStatus" class="avail-status"></div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Booking Date</label>
+          <input type="date" id="booking_date" required>
+        </div>
+        <div class="form-group">
+          <label>Duration (Hours)</label>
+          <input type="number" id="duration_hours" min="{{ service.min_hours }}" value="{{ service.min_hours }}" required>
+        </div>
+      </div>
 
       <div class="form-group">
         <label>Event Address</label>
-        <input type="text" id="event_address" placeholder="123 Main St, City, State" required>
+        <input type="text" id="event_address" placeholder="123 Main St, City" required>
         <div id="map"></div>
       </div>
 
       <input type="hidden" id="latitude">
       <input type="hidden" id="longitude">
+
+      <div class="form-group">
+        <label>Special Requests</label>
+        <textarea id="special_requests" placeholder="Any special requirements or preferences..."></textarea>
+      </div>
     </form>
   </div>
 
@@ -120,36 +71,43 @@
   <div>
     <div class="summary-card">
       <div class="summary-title">BOOKING SUMMARY</div>
+      
       <div class="summary-wall">
-        <div class="summary-icon">📺</div>
+        <div class="summary-icon">📷</div>
         <div>
-          <div class="summary-wall-name">{{ wall.size }} LED Wall</div>
-          <div class="summary-wall-id">{{ wall.pixels }} · {{ wall.brightness }}</div>
+          <div class="summary-wall-name">{{ service.name }}</div>
+          <div class="summary-wall-id">{{ service.category }}</div>
         </div>
       </div>
+
       <div class="summary-rows">
-        <div class="summary-row"><span>Daily Rate</span><strong>{{ wall.price }}</strong></div>
-        <div class="summary-row"><span>Duration</span><strong id="durationLabel">— days</strong></div>
+        <div class="summary-row"><span>Base Price</span><strong>₹{{ service.base_price }}</strong></div>
+        <div class="summary-row"><span>Duration</span><strong id="durationLabel">{{ service.min_hours }} hrs</strong></div>
+        <div class="summary-row"><span>Extra Hours</span><strong id="extraHoursCharge">₹0</strong></div>
         <div class="summary-divider"></div>
-        <div class="summary-row summary-total"><span>Estimated Total</span><strong id="totalLabel">$—</strong></div>
+        <div class="summary-row summary-total"><span>Estimated Total</span><strong id="totalLabel">₹{{ service.base_price }}</strong></div>
       </div>
-      <div class="summary-note">Final invoice sent after booking confirmation.</div>
-      <button class="btn btn-primary" id="submitBtn" disabled>Confirm Booking →</button>
+
+      <div class="summary-note">Final invoice will be sent after booking confirmation.</div>
+      <button class="btn btn-primary" id="submitBtn" style="width: 100%; justify-content: center; padding: 1rem; font-size: 1rem; margin-top: 1rem;">Confirm & Next →</button>
     </div>
   </div>
 </div>
+
 {% endblock %}
 
 {% block scripts %}
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script>
-  const DAILY_RATE = {{ wall.price.replace('$','').replace('/day','') }};
-  const WALL_SIZE = '{{ wall.id }}';
+const BASE_PRICE = Number("{{ service.base_price }}");
+const MIN_HOURS = Number("{{ service.min_hours }}");
+  const EXTRA_HOUR_PRICE = 2000;
 
   // Map init
-  const map = L.map('map').setView([37.7749, -122.4194], 12);
+  const map = L.map('map').setView([15.3733, 75.6418], 12);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
   let marker;
+
   map.on('click', async e => {
     const {lat, lng} = e.latlng;
     if (marker) marker.setLatLng(e.latlng);
@@ -163,74 +121,55 @@
     } catch {}
   });
 
-  // Availability check
-  let availOk = false;
-  async function checkAvail() {
-    const s = document.getElementById('start_date').value;
-    const e = document.getElementById('end_date').value;
-    if (!s || !e || e < s) return;
-    const res = await fetch('/api/check-availability', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({led_wall_size: WALL_SIZE, start_date: s, end_date: e})
-    });
-    const d = await res.json();
-    const el = document.getElementById('availStatus');
-    el.textContent = d.message;
-    el.className = 'avail-status ' + (d.available ? 'avail-ok' : 'avail-no');
-    availOk = d.available;
-    updateSummary();
-    updateBtn();
-  }
-
-  function daysBetween(s, e) {
-    const ms = new Date(e) - new Date(s);
-    return Math.max(1, Math.ceil(ms / 86400000) + 1);
-  }
-
+  // Update summary on duration change
+  document.getElementById('duration_hours').addEventListener('change', updateSummary);
+  
   function updateSummary() {
-    const s = document.getElementById('start_date').value;
-    const e = document.getElementById('end_date').value;
-    if (s && e && e >= s) {
-      const days = daysBetween(s, e);
-      document.getElementById('durationLabel').textContent = days + ' day' + (days > 1 ? 's' : '');
-      document.getElementById('totalLabel').textContent = '$' + (days * DAILY_RATE).toLocaleString();
-    }
+    const hours = parseInt(document.getElementById('duration_hours').value) || MIN_HOURS;
+    const extraHours = Math.max(0, hours - MIN_HOURS);
+    const extraCharge = extraHours * EXTRA_HOUR_PRICE;
+    const total = BASE_PRICE + extraCharge;
+
+    document.getElementById('durationLabel').textContent = hours + ' hrs';
+    document.getElementById('extraHoursCharge').textContent = '₹' + extraCharge.toLocaleString();
+    document.getElementById('totalLabel').textContent = '₹' + total.toLocaleString();
   }
 
-  function updateBtn() {
-    const name = document.getElementById('customer_name').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const addr = document.getElementById('event_address').value.trim();
-    const s = document.getElementById('start_date').value;
-    const e = document.getElementById('end_date').value;
-    document.getElementById('submitBtn').disabled = !(availOk && name && phone && addr && s && e);
-  }
+  document.getElementById('submitBtn').addEventListener('click', async (e) => {
+    e.preventDefault();
+    
+    const formData = {
+      customer_name: document.getElementById('customer_name').value,
+      phone: document.getElementById('phone').value,
+      email: document.getElementById('email').value,
+      service_id: document.getElementById('service_id').value,
+      booking_date: document.getElementById('booking_date').value,
+      duration_hours: document.getElementById('duration_hours').value,
+      event_address: document.getElementById('event_address').value,
+      event_type: document.getElementById('event_type').value,
+      special_requests: document.getElementById('special_requests').value,
+      latitude: document.getElementById('latitude').value,
+      longitude: document.getElementById('longitude').value
+    };
 
-  document.getElementById('start_date').addEventListener('change', checkAvail);
-  document.getElementById('end_date').addEventListener('change', checkAvail);
-  ['customer_name','phone','event_address'].forEach(id =>
-    document.getElementById(id).addEventListener('input', updateBtn)
-  );
-
-  document.getElementById('submitBtn').addEventListener('click', async () => {
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true; btn.textContent = 'Booking…';
-    const res = await fetch('/api/book', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        customer_name: document.getElementById('customer_name').value,
-        phone: document.getElementById('phone').value,
-        led_wall_size: WALL_SIZE,
-        start_date: document.getElementById('start_date').value,
-        end_date: document.getElementById('end_date').value,
-        event_address: document.getElementById('event_address').value,
-        latitude: document.getElementById('latitude').value || null,
-        longitude: document.getElementById('longitude').value || null,
-      })
+    const response = await fetch('/api/book', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify(formData)
     });
-    const d = await res.json();
-    if (d.success) window.location = '/success/' + d.booking_id;
-    else { alert(d.message); btn.disabled = false; btn.textContent = 'Confirm Booking →'; }
+
+    const data = await response.json();
+    if (data.success) {
+      window.location.href = `/payment/${data.booking_id}`;
+    } else {
+      alert('Error: ' + data.message);
+    }
   });
+
+  // Set min date to today
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('booking_date').min = today;
+
+  updateSummary();
 </script>
 {% endblock %}

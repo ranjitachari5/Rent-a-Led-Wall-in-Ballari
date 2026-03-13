@@ -3,171 +3,22 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>{% block title %}LumenWall{% endblock %}</title>
+  <title>{% block title %}Crazy Vision — Professional Photography Services{% endblock %}</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <style>
-    /* ── CSS Variables ─────────────────────────────────── */
-    :root {
-      --ease: cubic-bezier(.4,0,.2,1);
-      --radius: 12px;
-      --transition: .25s var(--ease);
-    }
-
-    [data-theme="dark"] {
-      --bg:         #0a0a0f;
-      --bg2:        #111118;
-      --bg3:        #1a1a24;
-      --border:     rgba(255,255,255,.08);
-      --text:       #f0f0f5;
-      --text2:      #9090a8;
-      --text3:      #5a5a72;
-      --accent:     #e8ff5a;
-      --accent2:    #7c6cfa;
-      --glow:       rgba(232,255,90,.15);
-      --card-bg:    rgba(255,255,255,.03);
-      --card-hover: rgba(255,255,255,.06);
-      --toggle-bg:  #1a1a24;
-      --shadow:     0 8px 32px rgba(0,0,0,.4);
-    }
-
-    [data-theme="light"] {
-      --bg:         #f8f8fc;
-      --bg2:        #ffffff;
-      --bg3:        #f0f0f8;
-      --border:     rgba(0,0,0,.08);
-      --text:       #12121a;
-      --text2:      #5a5a72;
-      --text3:      #9090a8;
-      --accent:     #5b3ef8;
-      --accent2:    #e8ff5a;
-      --glow:       rgba(91,62,248,.12);
-      --card-bg:    rgba(0,0,0,.02);
-      --card-hover: rgba(0,0,0,.04);
-      --toggle-bg:  #e8e8f0;
-      --shadow:     0 8px 32px rgba(0,0,0,.08);
-    }
-
-    /* ── Reset ─────────────────────────────────────────── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: 'DM Sans', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-      transition: background var(--transition), color var(--transition);
-      line-height: 1.6;
-    }
-
-    /* ── Nav ────────────────────────────────────────────── */
-    nav {
-      position: sticky; top: 0; z-index: 100;
-      backdrop-filter: blur(20px);
-      background: rgba(var(--bg-raw, 10,10,15), .7);
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem;
-      display: flex; align-items: center; justify-content: space-between;
-      height: 64px;
-      transition: background var(--transition);
-    }
-    [data-theme="light"] nav { background: rgba(248,248,252,.85); }
-
-    .nav-brand {
-      font-family: 'Bebas Neue', cursive;
-      font-size: 1.75rem;
-      letter-spacing: .08em;
-      color: var(--text);
-      text-decoration: none;
-      display: flex; align-items: center; gap: .5rem;
-    }
-    .nav-brand span { color: var(--accent); }
-
-    .nav-right { display: flex; align-items: center; gap: 1.5rem; }
-
-    .nav-link {
-      color: var(--text2); text-decoration: none;
-      font-size: .875rem; font-weight: 500;
-      transition: color var(--transition);
-    }
-    .nav-link:hover { color: var(--text); }
-
-    /* ── Theme Toggle ───────────────────────────────────── */
-    .theme-toggle {
-      position: relative;
-      width: 52px; height: 28px;
-      background: var(--toggle-bg);
-      border: 1px solid var(--border);
-      border-radius: 999px;
-      cursor: pointer;
-      transition: background var(--transition), border-color var(--transition);
-      flex-shrink: 0;
-    }
-    .theme-toggle::before {
-      content: '';
-      position: absolute;
-      top: 3px; left: 3px;
-      width: 20px; height: 20px;
-      border-radius: 50%;
-      background: var(--accent);
-      transition: transform var(--transition), background var(--transition);
-      box-shadow: 0 2px 8px rgba(0,0,0,.3);
-    }
-    [data-theme="light"] .theme-toggle::before { transform: translateX(24px); }
-
-    .theme-toggle-label {
-      font-size: .75rem;
-      font-family: 'DM Mono', monospace;
-      color: var(--text3);
-      letter-spacing: .05em;
-    }
-    .theme-toggle-wrap { display: flex; align-items: center; gap: .6rem; }
-
-    /* ── Footer ─────────────────────────────────────────── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem;
-      text-align: center;
-      color: var(--text3);
-      font-size: .8rem;
-      margin-top: 6rem;
-    }
-
-    /* ── Utility ─────────────────────────────────────────── */
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
-    .btn {
-      display: inline-flex; align-items: center; gap: .5rem;
-      padding: .75rem 1.75rem;
-      border-radius: var(--radius);
-      font-family: 'DM Sans', sans-serif;
-      font-weight: 600; font-size: .9rem;
-      cursor: pointer; border: none;
-      transition: all var(--transition);
-      text-decoration: none;
-    }
-    .btn-primary {
-      background: var(--accent);
-      color: #0a0a0f;
-    }
-    .btn-primary:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 8px 24px var(--glow); }
-    .btn-ghost {
-      background: transparent;
-      border: 1px solid var(--border);
-      color: var(--text);
-    }
-    .btn-ghost:hover { background: var(--card-hover); }
-
-    a { color: var(--accent); }
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
   {% block head %}{% endblock %}
 </head>
 <body>
 
 <nav>
-  <a href="/" class="nav-brand">LUMEN<span>WALL</span></a>
+  <a href="/" class="nav-brand">CRAZY<span>VISION</span></a>
+  <a href="tel:+9731878494"class="nav-brand">📞 Contact Now</a>
   <div class="nav-right">
-    <a href="/" class="nav-link">Walls</a>
-    <a href="/#pricing" class="nav-link">Pricing</a>
+    <a href="/" class="nav-link">Home</a>
+    <a href="/services" class="nav-link">Services</a>
+    <a href="/gallery" class="nav-link">Gallery</a>
+    <a href="/reviews" class="nav-link">Reviews</a>
     <a href="/admin" class="nav-link">Admin</a>
     <div class="theme-toggle-wrap">
       <span class="theme-toggle-label" id="theme-label">DARK</span>
@@ -180,7 +31,7 @@
 
 <footer>
   <div class="container">
-    © 2025 LumenWall · Premium LED Wall Rentals · All rights reserved
+    © 2025 Crazy Vision · Professional Photography Services · Ballari, Karnataka · All rights reserved
   </div>
 </footer>
 
@@ -189,7 +40,7 @@
   const root = document.documentElement;
   const toggle = document.getElementById('themeToggle');
   const label = document.getElementById('theme-label');
-  const saved = localStorage.getItem('lumenwall-theme') || 'dark';
+  const saved = localStorage.getItem('crazyvision-theme') || 'dark';
   root.setAttribute('data-theme', saved);
   label.textContent = saved.toUpperCase();
 
@@ -197,7 +48,7 @@
     const current = root.getAttribute('data-theme');
     const next = current === 'dark' ? 'light' : 'dark';
     root.setAttribute('data-theme', next);
-    localStorage.setItem('lumenwall-theme', next);
+    localStorage.setItem('crazyvision-theme', next);
     label.textContent = next.toUpperCase();
   });
 </script>

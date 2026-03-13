@@ -1,303 +1,208 @@
 {% extends "base.html" %}
-{% block title %}LumenWall — LED Wall Rentals{% endblock %}
+{% block title %}Crazy Vision— Professional Photography in Ballari{% endblock %}
 
 {% block head %}
-<style>
-  /* ── Hero ──────────────────────────────────────────────── */
-  .hero {
-    padding: 7rem 1.5rem 5rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse 70% 50% at 50% 0%, var(--glow), transparent 70%);
-    pointer-events: none;
-  }
-  .hero-eyebrow {
-    display: inline-flex; align-items: center; gap: .5rem;
-    font-family: 'DM Mono', monospace;
-    font-size: .75rem; letter-spacing: .15em;
-    color: var(--accent);
-    background: var(--glow);
-    border: 1px solid rgba(232,255,90,.2);
-    padding: .35rem 1rem;
-    border-radius: 999px;
-    margin-bottom: 1.5rem;
-    text-transform: uppercase;
-  }
-  [data-theme="light"] .hero-eyebrow {
-    border-color: rgba(91,62,248,.2);
-  }
-  .hero h1 {
-    font-family: 'Bebas Neue', cursive;
-    font-size: clamp(3.5rem, 10vw, 7rem);
-    line-height: .95;
-    letter-spacing: .04em;
-    margin-bottom: 1.5rem;
-  }
-  .hero h1 em {
-    font-style: normal;
-    color: var(--accent);
-  }
-  .hero-sub {
-    max-width: 520px; margin: 0 auto 2.5rem;
-    color: var(--text2); font-size: 1.1rem; line-height: 1.7;
-  }
-  .hero-cta { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
-
-  /* ── Stats bar ──────────────────────────────────────────── */
-  .stats-bar {
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: 1.75rem 0;
-    display: flex; justify-content: center;
-    gap: 0;
-  }
-  .stat {
-    flex: 1; max-width: 200px;
-    text-align: center;
-    padding: 0 2rem;
-    border-right: 1px solid var(--border);
-  }
-  .stat:last-child { border-right: none; }
-  .stat-val {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 2.2rem;
-    color: var(--accent);
-    letter-spacing: .05em;
-    line-height: 1;
-    margin-bottom: .25rem;
-  }
-  .stat-label { font-size: .8rem; color: var(--text3); letter-spacing: .08em; text-transform: uppercase; }
-
-  /* ── Section headings ───────────────────────────────────── */
-  .section { padding: 5rem 1.5rem; }
-  .section-header { margin-bottom: 3rem; }
-  .section-eyebrow {
-    font-family: 'DM Mono', monospace;
-    font-size: .75rem; letter-spacing: .15em; text-transform: uppercase;
-    color: var(--accent); margin-bottom: .75rem;
-  }
-  .section-title {
-    font-family: 'Bebas Neue', cursive;
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    letter-spacing: .04em; line-height: 1;
-    margin-bottom: .75rem;
-  }
-  .section-sub { color: var(--text2); max-width: 480px; }
-
-  /* ── Wall Cards ─────────────────────────────────────────── */
-  .walls-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 1.5rem;
-  }
-  .wall-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    overflow: hidden;
-    transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
-    position: relative;
-  }
-  .wall-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow);
-    border-color: rgba(232,255,90,.3);
-  }
-  [data-theme="light"] .wall-card:hover { border-color: rgba(91,62,248,.25); }
-
-  .wall-card.featured {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent), 0 8px 32px var(--glow);
-  }
-  .wall-badge {
-    position: absolute; top: 1rem; right: 1rem;
-    background: var(--accent);
-    color: #0a0a0f;
-    font-size: .7rem; font-weight: 700;
-    letter-spacing: .1em; text-transform: uppercase;
-    padding: .2rem .7rem; border-radius: 999px;
-  }
-  .wall-visual {
-    height: 180px;
-    background: var(--bg3);
-    display: flex; align-items: center; justify-content: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .wall-visual::after {
-    content: '';
-    position: absolute; inset: 0;
-    background: linear-gradient(135deg, var(--glow) 0%, transparent 60%);
-  }
-  .wall-screen {
-    background: linear-gradient(135deg, #1a1a3e, #0d0d20);
-    border: 2px solid rgba(232,255,90,.3);
-    border-radius: 4px;
-    display: flex; align-items: center; justify-content: center;
-    position: relative; z-index: 1;
-    box-shadow: 0 0 40px rgba(232,255,90,.1);
-  }
-  [data-theme="light"] .wall-screen {
-    background: linear-gradient(135deg, #e8e0ff, #d0c8ff);
-    border-color: rgba(91,62,248,.3);
-    box-shadow: 0 0 40px rgba(91,62,248,.1);
-  }
-  .wall-screen svg { opacity: .4; }
-  .wall-body { padding: 1.75rem; }
-  .wall-size {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 2rem; letter-spacing: .06em;
-    line-height: 1; margin-bottom: .25rem;
-  }
-  .wall-desc { color: var(--text2); font-size: .9rem; margin-bottom: 1.25rem; }
-  .wall-specs {
-    display: grid; grid-template-columns: 1fr 1fr;
-    gap: .5rem; margin-bottom: 1.5rem;
-  }
-  .spec-item { background: var(--bg3); border-radius: 8px; padding: .6rem .8rem; }
-  .spec-label { font-size: .65rem; color: var(--text3); letter-spacing: .1em; text-transform: uppercase; margin-bottom: .1rem; }
-  .spec-val { font-size: .85rem; font-weight: 600; font-family: 'DM Mono', monospace; }
-  .wall-features {
-    display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1.5rem;
-  }
-  .feature-chip {
-    font-size: .72rem; padding: .2rem .7rem;
-    background: var(--bg3); border: 1px solid var(--border);
-    border-radius: 999px; color: var(--text2);
-  }
-  .wall-footer {
-    display: flex; align-items: center; justify-content: space-between;
-    padding-top: 1.25rem; border-top: 1px solid var(--border);
-  }
-  .wall-price {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 1.6rem; color: var(--accent); letter-spacing: .04em;
-  }
-  .wall-price-unit { font-size: .75rem; color: var(--text3); font-family: 'DM Sans', sans-serif; margin-left: .2rem; }
-
-  /* ── Pricing Section ────────────────────────────────────── */
-  #pricing { background: var(--bg2); }
-
-  .pricing-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-    margin-bottom: 2rem;
-  }
-  .price-card {
-    background: var(--card-bg);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 2rem;
-    position: relative;
-    transition: transform var(--transition), box-shadow var(--transition);
-  }
-  .price-card:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow);
-  }
-  .price-card.highlight {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 1px var(--accent), 0 12px 40px var(--glow);
-  }
-  .price-card-badge {
-    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
-    background: var(--accent);
-    color: #0a0a0f;
-    font-size: .7rem; font-weight: 700; letter-spacing: .12em;
-    text-transform: uppercase;
-    padding: .25rem 1rem; border-radius: 999px;
-    white-space: nowrap;
-  }
-  .price-tier {
-    font-family: 'DM Mono', monospace;
-    font-size: .75rem; letter-spacing: .12em; text-transform: uppercase;
-    color: var(--text3); margin-bottom: .5rem;
-  }
-  .price-name {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 1.5rem; letter-spacing: .06em;
-    margin-bottom: 1rem;
-  }
-  .price-amount {
-    display: flex; align-items: baseline; gap: .25rem;
-    margin-bottom: 1.75rem;
-  }
-  .price-currency { font-size: 1.2rem; font-weight: 600; color: var(--text2); margin-top: .3rem; }
-  .price-number {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 3.5rem; line-height: 1;
-    color: var(--accent); letter-spacing: .02em;
-  }
-  .price-per { font-size: .85rem; color: var(--text3); align-self: flex-end; padding-bottom: .2rem; }
-  .price-divider { height: 1px; background: var(--border); margin-bottom: 1.5rem; }
-  .price-features { list-style: none; display: flex; flex-direction: column; gap: .75rem; margin-bottom: 2rem; }
-  .price-features li {
-    display: flex; align-items: flex-start; gap: .6rem;
-    font-size: .9rem; color: var(--text2);
-  }
-  .price-features li::before {
-    content: '✓';
-    color: var(--accent);
-    font-weight: 700; flex-shrink: 0; margin-top: .05rem;
-  }
-  .price-features li.dimmed { color: var(--text3); }
-  .price-features li.dimmed::before { content: '—'; color: var(--text3); }
-
-  .pricing-note {
-    text-align: center;
-    color: var(--text3); font-size: .85rem;
-    padding: 1.5rem; background: var(--bg3);
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
-  }
-  .pricing-note strong { color: var(--text2); }
-
-  /* ── CTA Banner ─────────────────────────────────────────── */
-  .cta-banner {
-    margin: 0 1.5rem 5rem;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: 20px;
-    padding: 3.5rem 2rem;
-    text-align: center;
-    position: relative;
-    overflow: hidden;
-  }
-  .cta-banner::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: radial-gradient(ellipse 60% 80% at 50% 50%, var(--glow), transparent 70%);
-    pointer-events: none;
-  }
-  .cta-banner h2 {
-    font-family: 'Bebas Neue', cursive;
-    font-size: clamp(2rem, 5vw, 3rem);
-    letter-spacing: .05em; margin-bottom: .75rem;
-  }
-  .cta-banner p { color: var(--text2); margin-bottom: 2rem; max-width: 420px; margin-left: auto; margin-right: auto; }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/services.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/testimonials.css') }}">
 {% endblock %}
 
 {% block content %}
 <!-- Hero -->
 <section class="hero">
   <div class="container">
-    <div class="hero-eyebrow">⚡ Premium LED Wall Rentals</div>
-    <h1>LIGHT UP<br>YOUR <em>EVENT</em></h1>
-    <p class="hero-sub">Crystal-clear LED walls for concerts, corporate events, trade shows, and any occasion that deserves to be unforgettable.</p>
+    <div class="hero-eyebrow">📸 Professional Photography Services</div>
+    <h1>CAPTURE YOUR<br><em>PRECIOUS</em><br>MOMENTS</h1>
+    <p class="hero-sub">Stunning photography for weddings, birthdays, events, and any occasion worth remembering. Professional candid photography with a personal touch.</p>
     <div class="hero-cta">
-      <a href="#walls" class="btn btn-primary">View LED Walls</a>
-      <a href="#pricing" class="btn btn-ghost">See Pricing</a>
+      <a href="/services" class="btn btn-primary">Browse Services</a>
+      <a href="/gallery" class="btn btn-ghost">View Gallery</a>
     </div>
   </div>
 </section>
+
+<!-- Stats bar -->
+<div class="stats-bar">
+  <div class="stat">
+    <div class="stat-val">500+</div>
+    <div class="stat-label">Events Captured</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">10K+</div>
+    <div class="stat-label">Happy Clients</div>
+  </div>
+  <div class="stat">
+    <div class="stat-val">15+</div>
+    <div class="stat-label">Years Experience</div>
+  </div>
+</div>
+
+<!-- Services Preview -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">// Our Services</div>
+      <h2 class="section-title">Photography Services</h2>
+      <p class="section-sub">Professional photography for every occasion. From candid moments to formal events, we capture what matters.</p>
+    </div>
+
+    <div class="services-grid">
+      {% for service in services %}
+      <div class="service-card">
+        <div class="service-icon">
+          {% if service.category == 'wedding' %}📷
+          {% elif service.category == 'birthday' %}🎂
+          {% elif service.category == 'events' %}🎉
+          {% elif service.category == 'portraits' %}👥
+          {% else %}📸
+          {% endif %}
+        </div>
+        <div class="service-content">
+          <div class="service-category">{{ service.category }}</div>
+          <h3 class="service-title">{{ service.name }}</h3>
+          <p class="service-description">{{ service.description }}</p>
+          <div class="service-footer">
+            <div>
+              <div class="service-price">₹{{ service.base_price }}</div>
+              <div class="service-price-unit">onwards</div>
+            </div>
+            <a href="/booking/{{ service.slug }}" class="service-btn">Book Now →</a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+      <a href="/services" class="btn btn-primary">View All Services →</a>
+    </div>
+  </section>
+
+<!-- Why Choose Us -->
+<section class="section" style="background: var(--bg2);">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">// Why Choose Us</div>
+      <h2 class="section-title">Professional Excellence</h2>
+    </div>
+
+    <div class="grid-3">
+      <div class="feature-box">
+        <div class="feature-icon">🎯</div>
+        <h3>Expert Photographers</h3>
+        <p>15+ years of experience capturing beautiful moments at hundreds of events.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-icon">⚡</div>
+        <h3>Quick Delivery</h3>
+        <p>Edited photos delivered within 7 days. Premium editing and color grading included.</p>
+      </div>
+      <div class="feature-box">
+        <div class="feature-icon">💯</div>
+        <h3>100% Satisfaction</h3>
+        <p>Unlimited re-edits until you're happy. Your satisfaction is our guarantee.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA Banner -->
+<section class="cta-banner" style="margin: 0 1.5rem 5rem;">
+  <h2>Ready to Book Your Session?</h2>
+  <p>Let's capture your special moments together. Browse our services and book today.</p>
+  <a href="/services" class="btn btn-primary" style="margin-top: 1.5rem;">Get Started →</a>
+</section>
+
+<!-- Testimonials Preview -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-eyebrow">// Client Testimonials</div>
+      <h2 class="section-title">What Our Clients Say</h2>
+    </div>
+
+    <div class="testimonials-grid" style="max-width: 1100px; margin: 0 auto;">
+      <div class="testimonial-card">
+        <div class="testimonial-rating">
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="star">★</span>
+        </div>
+        <p class="testimonial-text testimonial-quote">Crazy Vision captured our wedding day perfectly. The candid shots are absolutely stunning!</p>
+        <div class="testimonial-author">
+          <div class="testimonial-name">Priya & Arjun</div>
+          <div class="testimonial-service">Wedding Photography</div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-rating">
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="star">★</span>
+        </div>
+        <p class="testimonial-text testimonial-quote">Professional team, great service, and amazing photos. Highly recommended for any event!</p>
+        <div class="testimonial-author">
+          <div class="testimonial-name">Rajesh Kumar</div>
+          <div class="testimonial-service">Birthday Photography</div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-rating">
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="star">★</span>
+          <span class="star">★</span>
+        </div>
+        <p class="testimonial-text testimonial-quote">Exceeded our expectations! The quality of photos and quick turnaround time is excellent.</p>
+        <div class="testimonial-author">
+          <div class="testimonial-name">Sneha Patel</div>
+          <div class="testimonial-service">Event Photography</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="text-align: center; margin-top: 2rem;">
+      <a href="/reviews" class="btn btn-ghost">View All Reviews →</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+
+  .feature-box {
+    text-align: center;
+    padding: 2rem;
+  }
+
+  .feature-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .feature-box h3 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.3rem;
+    letter-spacing: .04em;
+    margin-bottom: .75rem;
+  }
+
+  .feature-box p {
+    color: var(--text2);
+    line-height: 1.6;
+  }
+</style>
 
 <!-- Stats -->
 <div class="stats-bar">
@@ -473,4 +378,5 @@
     <a href="/admin" class="btn btn-ghost">View Dashboard</a>
   </div>
 </div>
+
 {% endblock %}

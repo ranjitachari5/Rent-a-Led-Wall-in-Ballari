@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% block title %}Photo Gallery — Crazy Vision Photography{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/gallery.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Gallery Hero -->
+<section style="padding: 4rem 1.5rem; text-align: center; background: var(--bg2); margin-bottom: 0;">
+  <div class="section-eyebrow" style="margin-bottom: 1rem;">// Portfolio</div>
+  <h1 class="section-title">Photo Gallery</h1>
+  <p class="section-sub" style="color: var(--text2); max-width: 600px; margin: 0 auto;">Explore our stunning portfolio of weddings, events, candid moments, and professional photoshoots from across Ballari.</p>
+</section>
+
+<!-- Gallery Section -->
+<div class="gallery-container">
+  <div class="gallery-filters" style="margin-top: 2rem;">
+    <button class="filter-btn active" onclick="filterGallery('all')">All</button>
+    <button class="filter-btn" onclick="filterGallery('wedding')">Wedding</button>
+    <button class="filter-btn" onclick="filterGallery('candid')">Candid</button>
+    <button class="filter-btn" onclick="filterGallery('birthday')">Birthday</button>
+    <button class="filter-btn" onclick="filterGallery('events')">Events</button>
+    <button class="filter-btn" onclick="filterGallery('portraits')">Portraits</button>
+  </div>
+
+  <div class="gallery-grid">
+    {% for item in gallery %}
+    <div class="gallery-item" data-category="{{ item.service_type | lower }}" data-index="{{ loop.index0 }}">
+      <img src="{{ item.image_path }}" alt="{{ item.title }}" class="gallery-item-image">
+      <div class="gallery-item-overlay">
+        <div class="gallery-item-title">{{ item.title }}</div>
+        <div class="gallery-item-category">{{ item.service_type }}</div>
+        <div class="gallery-item-description">{{ item.description }}</div>
+      </div>
+    </div>
+    {% else %}
+    <div class="gallery-placeholder" style="grid-column: 1 / -1;">
+      <div>
+        <div class="gallery-placeholder-icon">📷</div>
+        <div class="gallery-placeholder-text">Gallery coming soon! Check back for our latest work.</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- CTA Section -->
+<section class="cta-banner" style="margin: 4rem 1.5rem 5rem;">
+  <h2>Love what you see?</h2>
+  <p>Let's capture your special moments too. Book your photography session today.</p>
+  <a href="/services" class="btn btn-primary" style="margin-top: 1.5rem;">Browse Services →</a>
+</section>
+
+<!-- Modal for full image view -->
+<div class="gallery-modal" id="galleryModal">
+  <div class="gallery-modal-content">
+    <img id="modalImage" src="" alt="" class="gallery-modal-image">
+    <button class="gallery-modal-nav gallery-modal-prev" onclick="prevGallery()">❮</button>
+    <button class="gallery-modal-nav gallery-modal-next" onclick="nextGallery()">❯</button>
+    <button class="gallery-modal-close" onclick="closeModal()">✕</button>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+let currentImageIndex = 0;
+const galleryItems = document.querySelectorAll('.gallery-item');
+
+// Add click handlers to gallery items
+galleryItems.forEach(item => {
+  item.addEventListener('click', function() {
+    openModal(parseInt(this.dataset.index));
+  });
+});
+
+function openModal(index) {
+  currentImageIndex = index;
+  const modal = document.getElementById('galleryModal');
+  const item = galleryItems[index];
+  const img = item.querySelector('.gallery-item-image');
+  
+  document.getElementById('modalImage').src = img.src;
+  modal.classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('galleryModal').classList.remove('active');
+}
+
+function nextGallery() {
+  const visibleItems = Array.from(galleryItems).filter(item => item.offsetParent !== null);
+  currentImageIndex = (currentImageIndex + 1) % visibleItems.length;
+  const item = visibleItems[currentImageIndex];
+  const img = item.querySelector('.gallery-item-image');
+  document.getElementById('modalImage').src = img.src;
+}
+
+function prevGallery() {
+  const visibleItems = Array.from(galleryItems).filter(item => item.offsetParent !== null);
+  currentImageIndex = (currentImageIndex - 1 + visibleItems.length) % visibleItems.length;
+  const item = visibleItems[currentImageIndex];
+  const img = item.querySelector('.gallery-item-image');
+  document.getElementById('modalImage').src = img.src;
+}
+
+function filterGallery(category) {
+  galleryItems.forEach(item => {
+    if (category === 'all' || item.dataset.category === category.toLowerCase()) {
+      item.style.display = 'block';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+
+  // Update active button
+  document.querySelectorAll('.filter-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.classList.add('active');
+}
+
+// Close modal when clicking outside
+document.getElementById('galleryModal').addEventListener('click', function(e) {
+  if (e.target === this) {
+    closeModal();
+  }
+});
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+  const modal = document.getElementById('galleryModal');
+  if (modal.classList.contains('active')) {
+    if (e.key === 'ArrowRight') nextGallery();
+    if (e.key === 'ArrowLeft') prevGallery();
+    if (e.key === 'Escape') closeModal();
+  }
+});
+</script>
+{% endblock %}

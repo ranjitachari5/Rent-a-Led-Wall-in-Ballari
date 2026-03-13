@@ -1,0 +1,259 @@
+{% extends "base.html" %}
+{% block title %}Payment — Crazy Vision Photography{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/booking.css') }}">
+<style>
+  .payment-container {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem;
+  }
+
+  .payment-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+
+  .payment-title {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2rem;
+    letter-spacing: .04em;
+    margin-bottom: .5rem;
+  }
+
+  .payment-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .payment-details {
+    margin-bottom: 2rem;
+  }
+
+  .payment-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .75rem 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .payment-row:last-child {
+    border-bottom: none;
+  }
+
+  .payment-row-label {
+    color: var(--text2);
+  }
+
+  .payment-row-value {
+    font-weight: 600;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .payment-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 0;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--border);
+    font-size: 1.2rem;
+  }
+
+  .payment-total-value {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2rem;
+    color: var(--accent);
+  }
+
+  .payment-methods {
+    margin-bottom: 2rem;
+  }
+
+  .payment-method-label {
+    font-size: .8rem;
+    font-weight: 600;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--text2);
+    margin-bottom: 1rem;
+  }
+
+  .payment-method-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .payment-method-btn {
+    padding: 1rem;
+    border: 2px solid var(--border);
+    background: transparent;
+    border-radius: 12px;
+    color: var(--text);
+    cursor: pointer;
+    transition: all var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: .5rem;
+    font-weight: 600;
+  }
+
+  .payment-method-btn:hover {
+    border-color: var(--accent);
+    background: var(--glow);
+  }
+
+  .payment-method-btn.active {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #0a0a0f;
+  }
+
+  .payment-btn {
+    width: 100%;
+    padding: 1rem;
+    background: var(--accent);
+    color: #0a0a0f;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1rem;
+    letter-spacing: .05em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+  }
+
+  .payment-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--glow);
+  }
+
+  .payment-info {
+    background: rgba(91, 62, 248, 0.1);
+    border: 1px solid rgba(91, 62, 248, 0.2);
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    font-size: .9rem;
+  }
+
+  .payment-info-icon {
+    margin-right: .5rem;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="payment-container">
+  <div class="payment-header">
+    <h1 class="payment-title">Payment Details</h1>
+    <p style="color: var(--text2);">Complete your booking by processing the payment</p>
+  </div>
+
+  <!-- Booking Details -->
+  <div class="payment-card">
+    <div style="font-family: 'Bebas Neue', cursive; font-size: 1.1rem; letter-spacing: .04em; margin-bottom: 1rem;">YOUR BOOKING</div>
+    <div class="payment-details">
+      <div class="payment-row">
+        <span class="payment-row-label">Booking ID</span>
+        <span class="payment-row-value">#{{ '%04d' | format(booking.id) }}</span>
+      </div>
+      <div class="payment-row">
+        <span class="payment-row-label">Service</span>
+        <span class="payment-row-value">{{ booking.service_name }}</span>
+      </div>
+      <div class="payment-row">
+        <span class="payment-row-label">Date</span>
+        <span class="payment-row-value">{{ booking.booking_date }}</span>
+      </div>
+      <div class="payment-row">
+        <span class="payment-row-label">Duration</span>
+        <span class="payment-row-value">{{ booking.duration_hours }} hours</span>
+      </div>
+      <div class="payment-row">
+        <span class="payment-row-label">Location</span>
+        <span class="payment-row-value" style="max-width: 40%; text-align: right;">{{ booking.event_address[:30] }}...</span>
+      </div>
+      <div class="payment-total">
+        <span>Total Amount</span>
+        <span class="payment-total-value">₹{{ booking.total_price }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Methods -->
+  <div class="payment-card">
+    <div class="payment-method-label">Select Payment Method</div>
+    <div class="payment-method-group">
+      <button class="payment-method-btn active" onclick="selectPaymentMethod('razorpay')">
+        🇮🇳 Razorpay
+      </button>
+      <button class="payment-method-btn" onclick="selectPaymentMethod('stripe')">
+        💳 Stripe
+      </button>
+    </div>
+  </div>
+
+  <!-- Payment Info -->
+  <div class="payment-info">
+    <span class="payment-info-icon">ℹ️</span>
+    <strong>After payment:</strong> You'll receive a confirmation email with booking details and photographer contact information.
+  </div>
+
+  <!-- Pay Button -->
+  <form id="paymentForm">
+    <button type="submit" class="payment-btn">Complete Payment →</button>
+    <p style="text-align: center; margin-top: 1rem; font-size: .9rem; color: var(--text2);">
+      <a href="/" style="color: var(--accent); text-decoration: none;">Cancel &amp; go back</a>
+    </p>
+  </form>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+const bookingId = "{{ booking.id }}";
+let selectedPaymentMethod = 'razorpay';
+
+function selectPaymentMethod(method) {
+  selectedPaymentMethod = method;
+  document.querySelectorAll('.payment-method-btn').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  event.target.closest('.payment-method-btn').classList.add('active');
+}
+
+document.getElementById('paymentForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  // In production, integrate with Razorpay or Stripe SDK
+  // For now, mark as paid
+  const response = await fetch('/api/pay', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      booking_id: bookingId,
+      payment_method: selectedPaymentMethod
+    })
+  });
+
+  const data = await response.json();
+  if (data.success) {
+    alert('Payment successful! Your booking is confirmed.');
+    window.location.href = `/success/${bookingId}`;
+  } else {
+    alert('Payment failed: ' + data.message);
+  }
+});
+</script>
+{% endblock %}

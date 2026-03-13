@@ -1,40 +1,8 @@
 {% extends "base.html" %}
-{% block title %}Admin — LumenWall{% endblock %}
+{% block title %}Admin Dashboard — Crazy Vision{% endblock %}
 
 {% block head %}
-<style>
-  .admin-wrap { padding: 3rem 1.5rem; max-width: 1100px; margin: 0 auto; }
-  .admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
-  .admin-title { font-family: 'Bebas Neue', cursive; font-size: 2.5rem; letter-spacing: .05em; }
-
-  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
-  .mini-stat {
-    background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius);
-    padding: 1.25rem; display: flex; flex-direction: column; gap: .25rem;
-  }
-  .mini-stat-label { font-size: .7rem; color: var(--text3); letter-spacing: .1em; text-transform: uppercase; }
-  .mini-stat-val { font-family: 'Bebas Neue', cursive; font-size: 2rem; color: var(--accent); letter-spacing: .04em; }
-
-  .table-wrap { background: var(--bg2); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
-  table { width: 100%; border-collapse: collapse; font-size: .875rem; }
-  thead tr { background: var(--bg3); border-bottom: 1px solid var(--border); }
-  th {
-    text-align: left; padding: .875rem 1.25rem;
-    font-size: .7rem; letter-spacing: .1em; text-transform: uppercase;
-    color: var(--text3); font-weight: 600;
-  }
-  td { padding: .875rem 1.25rem; border-bottom: 1px solid var(--border); color: var(--text2); }
-  tr:last-child td { border-bottom: none; }
-  tbody tr:hover { background: var(--card-hover); }
-  .badge {
-    display: inline-block; padding: .2rem .65rem; border-radius: 999px;
-    font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
-  }
-  .badge-6x8 { background: rgba(124,108,250,.15); color: #a89cff; border: 1px solid rgba(124,108,250,.2); }
-  .badge-8x12 { background: var(--glow); color: var(--accent); border: 1px solid rgba(232,255,90,.2); }
-  [data-theme="light"] .badge-8x12 { background: rgba(91,62,248,.1); color: var(--accent); border-color: rgba(91,62,248,.2); }
-  .empty-row { text-align: center; color: var(--text3); padding: 3rem; }
-</style>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
 {% endblock %}
 
 {% block content %}
@@ -44,9 +12,10 @@
     <a href="/" class="btn btn-ghost">← Back to Site</a>
   </div>
 
+  <!-- Stats -->
   {% set total = bookings|length %}
-  {% set wall_6x8 = bookings|selectattr('led_wall_size','equalto','6x8')|list|length %}
-  {% set wall_8x12 = bookings|selectattr('led_wall_size','equalto','8x12')|list|length %}
+  {% set pending = bookings|selectattr('booking_status','equalto','pending')|list|length %}
+  {% set paid = bookings|selectattr('payment_status','equalto','paid')|list|length %}
 
   <div class="stats-row">
     <div class="mini-stat">
@@ -54,19 +23,21 @@
       <div class="mini-stat-val">{{ total }}</div>
     </div>
     <div class="mini-stat">
-      <div class="mini-stat-label">6×8 Bookings</div>
-      <div class="mini-stat-val">{{ wall_6x8 }}</div>
+      <div class="mini-stat-label">Pending</div>
+      <div class="mini-stat-val">{{ pending }}</div>
     </div>
     <div class="mini-stat">
-      <div class="mini-stat-label">8×12 Bookings</div>
-      <div class="mini-stat-val">{{ wall_8x12 }}</div>
+      <div class="mini-stat-label">Paid</div>
+      <div class="mini-stat-val">{{ paid }}</div>
     </div>
     <div class="mini-stat">
-      <div class="mini-stat-label">Est. Revenue</div>
-      <div class="mini-stat-val">${{ ((wall_6x8 * 299) + (wall_8x12 * 499))|string[:5] }}</div>
+      <div class="mini-stat-label">Pending Reviews</div>
+      <div class="mini-stat-val">{{ pending_reviews|length }}</div>
     </div>
   </div>
 
+  <!-- Bookings Table -->
+  <h2 style="font-family: 'Bebas Neue', cursive; font-size: 1.5rem; letter-spacing: .04em; margin: 2rem 0 1rem;">📅 Bookings</h2>
   <div class="table-wrap">
     <table>
       <thead>
@@ -74,11 +45,13 @@
           <th>#</th>
           <th>Customer</th>
           <th>Phone</th>
-          <th>Wall</th>
-          <th>Start</th>
-          <th>End</th>
+          <th>Service</th>
+          <th>Date</th>
+          <th>Duration</th>
           <th>Location</th>
-          <th>Booked At</th>
+          <th>Payment</th>
+          <th>Status</th>
+          <th>Booked</th>
         </tr>
       </thead>
       <tbody>
@@ -88,16 +61,118 @@
             <td style="font-family:'DM Mono',monospace;color:var(--text3)">#{{ '%04d'|format(b.id) }}</td>
             <td style="color:var(--text);font-weight:600">{{ b.customer_name }}</td>
             <td style="font-family:'DM Mono',monospace">{{ b.phone }}</td>
-            <td><span class="badge badge-{{ b.led_wall_size }}">{{ b.led_wall_size }}</span></td>
-            <td>{{ b.start_date }}</td>
-            <td>{{ b.end_date }}</td>
-            <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="{{ b.event_address }}">{{ b.event_address }}</td>
+            <td>{{ b.service_name }}</td>
+            <td style="font-family:'DM Mono',monospace">{{ b.booking_date }}</td>
+            <td>{{ b.duration_hours }}h</td>
+            <td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" title="{{ b.event_address }}">{{ b.event_address[:20] }}...</td>
+            <td>
+              <span class="badge {% if b.payment_status == 'paid' %}badge-paid{% else %}badge-pending{% endif %}">
+                {{ b.payment_status | upper }}
+              </span>
+            </td>
+            <td>
+              <span class="badge {% if b.booking_status == 'confirmed' %}badge-confirmed{% else %}badge-pending{% endif %}">
+                {{ b.booking_status | upper }}
+              </span>
+            </td>
             <td style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--text3)">{{ b.created_at[:16] if b.created_at else '—' }}</td>
           </tr>
           {% endfor %}
         {% else %}
-          <tr><td colspan="8" class="empty-row">No bookings yet.</td></tr>
+          <tr><td colspan="10" class="empty-row">No bookings yet.</td></tr>
         {% endif %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pending Reviews -->
+  {% if pending_reviews %}
+  <h2 style="font-family: 'Bebas Neue', cursive; font-size: 1.5rem; letter-spacing: .04em; margin: 2rem 0 1rem;">⭐ Pending Reviews ({{ pending_reviews|length }})</h2>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Service</th>
+          <th>Rating</th>
+          <th>Review</th>
+          <th>Date</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for review in pending_reviews %}
+        <tr>
+          <td style="color:var(--text);font-weight:600">{{ review.customer_name }}</td>
+          <td>{{ review.service_type }}</td>
+          <td>
+            <span style="color:var(--accent);font-size:1.2rem;">
+              {% for i in range(1,6) %}
+                {% if i <= review.rating %}★{% else %}☆{% endif %}
+              {% endfor %}
+            </span>
+          </td>
+          <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--text2)" title="{{ review.review_text }}">{{ review.review_text }}</td>
+          <td style="font-family:'DM Mono',monospace;font-size:.8rem;color:var(--text3)">{{ review.created_at[:10] if review.created_at else '—' }}</td>
+          <td>
+            <button onclick="approveReview({{ review.id }})" class="badge" style="background:rgba(100,200,100,.15);color:#6dc86d;border:1px solid rgba(100,200,100,.2);cursor:pointer;">Approve</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% endif %}
+
+  <!-- Quick Stats -->
+  <div style="margin-top: 3rem; padding: 2rem; background: var(--bg2); border-radius: 12px; border: 1px solid var(--border);">
+    <h3 style="font-family: 'Bebas Neue', cursive; font-size: 1.2rem; letter-spacing: .04em; margin-bottom: 1rem;">📊 Revenue Summary</h3>
+    {% set total_revenue = bookings|map(attribute='total_price')|select|sum(0) %}
+    <div class="stats-row">
+      <div class="mini-stat">
+        <div class="mini-stat-label">Total Revenue</div>
+        <div class="mini-stat-val">₹{{ total_revenue | default(0) }}</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-label">Avg Booking Value</div>
+        <div class="mini-stat-val">₹{{ (total_revenue // total if total > 0 else 0) | int }}</div>
+      </div>
+      <div class="mini-stat">
+        <div class="mini-stat-label">Conversion Rate</div>
+        <div class="mini-stat-val">{{ ((paid * 100 // total) if total > 0 else 0) }}%</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .badge-paid {
+    background: rgba(100, 200, 100, 0.15);
+    color: #6dc86d;
+    border: 1px solid rgba(100, 200, 100, 0.2);
+  }
+
+  .badge-pending {
+    background: rgba(255, 180, 0, 0.15);
+    color: #ffb400;
+    border: 1px solid rgba(255, 180, 0, 0.2);
+  }
+
+  .badge-confirmed {
+    background: var(--glow);
+    color: var(--accent);
+    border: 1px solid rgba(232, 255, 90, 0.2);
+  }
+</style>
+
+<script>
+function approveReview(reviewId) {
+  // TODO: Implement review approval via API
+  alert('Review approval functionality coming soon!');
+}
+</script>
+
+{% endblock %}
       </tbody>
     </table>
   </div>

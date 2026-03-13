@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}{{ service.name }} — Crazy Vision Photography{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/services.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Service Hero -->
+<section class="service-detail-hero">
+  <h1 class="service-detail-title">{{ service.name }}</h1>
+  <p class="service-detail-sub">{{ service.description }}</p>
+</section>
+
+<!-- Service Details -->
+<div class="service-detail-layout">
+  <div class="service-detail-content">
+    <h2>About This Service</h2>
+    <p>{{ service.description }}</p>
+    
+    <h2>What's Included</h2>
+    <ul class="service-features">
+      {% for feature in service.includes %}
+      <li>{{ feature }}</li>
+      {% endfor %}
+    </ul>
+
+    <h2>Perfect For</h2>
+    <p>
+      {% if service.category == 'wedding' %}
+        Your complete wedding day from start to finish. Pre-wedding portraits, ceremony, reception, and all the candid moments in between.
+      {% elif service.category == 'pre-wedding' %}
+        Romantic couple portraits and pre-wedding shoots at your favorite locations. Multiple settings and professional styling included.
+      {% elif service.category == 'candid' %}
+        Capturing natural, unposed moments. Perfect for events where you want authentic, genuine emotions preserved forever.
+      {% elif service.category == 'events' %}
+        Corporate events, conferences, parties, and celebrations. Full coverage of your event with professional editing.
+      {% elif service.category == 'birthday' %}
+        From children's birthday parties to adult celebrations. We capture the joy, laughter, and special moments.
+      {% elif service.category == 'portraits' %}
+        Individual, couple, or family portraits. Studio or outdoor location with professional styling and lighting.
+      {% endif %}
+    </p>
+
+    <h2>Our Process</h2>
+    <ul class="service-features">
+      <li><strong>Consultation:</strong> We discuss your vision and requirements</li>
+      <li><strong>Shooting:</strong> Professional photography on your special day</li>
+      <li><strong>Editing:</strong> Premium editing and color grading</li>
+      <li><strong>Delivery:</strong> High-resolution digital files within 7 days</li>
+    </ul>
+
+    <h2>Pricing</h2>
+    <p>Base price: <strong>₹{{ service.base_price }}</strong> for {{ service.min_hours }} hours</p>
+    <p>Additional hours: <strong>₹2,000</strong> per hour</p>
+  </div>
+
+  <!-- Sidebar -->
+  <div class="service-sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Base Price</div>
+      <div class="sidebar-value">₹{{ service.base_price }}</div>
+      <div class="sidebar-desc">for {{ service.min_hours }} hours</div>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Includes</div>
+      <ul class="sidebar-includes">
+        {% for item in service.includes %}
+        <li>{{ item }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <div class="sidebar-label">Minimum Duration</div>
+      <div class="sidebar-value">{{ service.min_hours }}h</div>
+    </div>
+
+    <div class="sidebar-divider"></div>
+
+    <div class="sidebar-section">
+      <a href="/booking/{{ service.slug }}" class="sidebar-btn">Book This Service →</a>
+    </div>
+  </div>
+</div>
+
+<!-- Related Services -->
+<section class="section" style="background: var(--bg2);">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Other Services</h2>
+    </div>
+    <div class="services-grid" style="max-width: 1100px; margin: 0 auto;">
+      <!-- Services grid would go here -->
+      <p style="text-align: center; color: var(--text2);">
+        <a href="/services" class="btn btn-ghost">View All Services →</a>
+      </p>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

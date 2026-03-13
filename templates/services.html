@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block title %}Photography Services — Crazy Vision{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/services.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Services Hero -->
+<section class="service-detail-hero">
+  <div class="section-eyebrow">// Our Services</div>
+  <h1 class="service-detail-title">Photography Services</h1>
+  <p class="service-detail-sub">Professional photography for every occasion. Choose the service that fits your needs and book with us today.</p>
+</section>
+
+<!-- Services Grid -->
+<div class="services-grid" style="max-width: 1200px; margin: 0 auto; padding: 4rem 1.5rem;">
+  {% for service in services %}
+  <div class="service-card">
+    <div class="service-icon">
+      {% if service.category == 'wedding' %}📷
+      {% elif service.category == 'birthday' %}🎂
+      {% elif service.category == 'events' %}🎉
+      {% elif service.category == 'portraits' %}👥
+      {% else %}📸
+      {% endif %}
+    </div>
+    <div class="service-content">
+      <div class="service-category">{{ service.category }}</div>
+      <h3 class="service-title">{{ service.name }}</h3>
+      <p class="service-description">{{ service.description }}</p>
+      <div class="service-footer">
+        <div>
+          <div class="service-price">₹{{ service.base_price }}</div>
+          <div class="service-price-unit">onwards</div>
+        </div>
+        <a href="/service/{{ service.slug }}" class="service-btn">View Details →</a>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- CTA Section -->
+<section class="cta-banner" style="margin: 3rem 1.5rem 5rem;">
+  <h2>Can't decide? Let's talk!</h2>
+  <p>Call us or visit our gallery to see our work. We'll help you choose the perfect service.</p>
+  <a href="tel:+919731878494" class="btn btn-primary" style="margin-top: 1.5rem;">📞 Call Now</a>
+</section>
+
+{% endblock %}

@@ -1,0 +1,149 @@
+{% extends "base.html" %}
+{% block title %}Reviews & Testimonials — Crazy Vision Photography{% endblock %}
+
+{% block head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/testimonials.css') }}">
+{% endblock %}
+
+{% block content %}
+<!-- Header -->
+<section class="testimonials-container">
+  <div class="testimonials-header">
+    <div class="section-eyebrow" style="font-family: 'DM Mono', monospace; font-size: .75rem; letter-spacing: .15em; text-transform: uppercase; color: var(--accent); margin-bottom: .75rem;">// Reviews</div>
+    <h1 class="testimonials-title">Client Testimonials</h1>
+    <p class="testimonials-subtitle">Read what our happy clients say about our photography services</p>
+  </div>
+
+  <!-- Reviews Grid -->
+  {% if reviews %}
+  <div class="testimonials-grid">
+    {% for review in reviews %}
+    <div class="testimonial-card">
+      <div class="testimonial-rating">
+        {% for i in range(1, 6) %}
+          <span class="star {% if i > review.rating %}empty{% endif %}">★</span>
+        {% endfor %}
+      </div>
+      <p class="testimonial-text testimonial-quote">{{ review.review_text }}</p>
+      <div class="testimonial-author">
+        <div class="testimonial-name">{{ review.customer_name }}</div>
+        <div class="testimonial-service">{{ review.service_type }}</div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="no-reviews">
+    <div class="no-reviews-icon">⭐</div>
+    <div class="no-reviews-text">No reviews yet. Be the first to share your experience!</div>
+  </div>
+  {% endif %}
+
+  <!-- Review Submission Form -->
+  <div class="review-form-container">
+    <h2 class="review-form-title">Share Your Experience</h2>
+    <p style="text-align: center; color: var(--text2); margin-bottom: 1.5rem;">Loved your shoot? Tell us about it!</p>
+
+    <form id="reviewForm">
+      <div class="form-group">
+        <label>Your Name</label>
+        <input type="text" id="customer_name" placeholder="John Doe" required>
+      </div>
+
+      <div class="form-group">
+        <label>Service Type</label>
+        <select id="service_type" required>
+          <option value="">Select a service...</option>
+          <option value="Candid Photography">Candid Photography</option>
+          <option value="Wedding Photography">Wedding Photography</option>
+          <option value="Pre-Wedding Shoots">Pre-Wedding Shoots</option>
+          <option value="Event Photography">Event Photography</option>
+          <option value="Birthday Photography">Birthday Photography</option>
+          <option value="Portrait Sessions">Portrait Sessions</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Rating</label>
+        <div class="rating-input">
+          <button type="button" class="rating-star" data-rating="1" onclick="setRating(1)">★</button>
+          <button type="button" class="rating-star" data-rating="2" onclick="setRating(2)">★</button>
+          <button type="button" class="rating-star" data-rating="3" onclick="setRating(3)">★</button>
+          <button type="button" class="rating-star" data-rating="4" onclick="setRating(4)">★</button>
+          <button type="button" class="rating-star" data-rating="5" onclick="setRating(5)">★</button>
+        </div>
+        <input type="hidden" id="rating" value="0" required>
+      </div>
+
+      <div class="form-group">
+        <label>Your Review</label>
+        <textarea id="review_text" placeholder="Tell us about your experience..." required></textarea>
+      </div>
+
+      <div id="formMessage" class="form-message"></div>
+
+      <button type="submit" class="form-submit">Submit Review →</button>
+    </form>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+let selectedRating = 0;
+
+function setRating(rating) {
+  selectedRating = rating;
+  document.getElementById('rating').value = rating;
+  
+  document.querySelectorAll('.rating-star').forEach((btn, idx) => {
+    if (idx < rating) {
+      btn.classList.add('active');
+    } else {
+      btn.classList.remove('active');
+    }
+  });
+}
+
+document.getElementById('reviewForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const formData = {
+    customer_name: document.getElementById('customer_name').value,
+    service_type: document.getElementById('service_type').value,
+    rating: parseInt(document.getElementById('rating').value),
+    review_text: document.getElementById('review_text').value
+  };
+
+  if (formData.rating === 0) {
+    showMessage('Please select a rating', 'error');
+    return;
+  }
+
+  const response = await fetch('/reviews', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(formData)
+  });
+
+  const data = await response.json();
+  if (data.success) {
+    showMessage(data.message, 'success');
+    document.getElementById('reviewForm').reset();
+    setRating(0);
+    setTimeout(() => {
+      location.reload();
+    }, 2000);
+  } else {
+    showMessage(data.message, 'error');
+  }
+});
+
+function showMessage(text, type) {
+  const msgEl = document.getElementById('formMessage');
+  msgEl.textContent = text;
+  msgEl.className = 'form-message show ' + type;
+}
+</script>
+{% endblock %}
